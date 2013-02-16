@@ -38,7 +38,7 @@
 	print "[resourceRequest]\n";
 	print "addr=bewest.io\n";
 	print "port=80\n";
-	print "audit=medevice://" . $uid .  "@bewest.io:9001/insulaudit";
+	print "audit=medevice://" . base64_encode ($row1->userid) .  "@bewest.io:9001/insulaudit";
 	print "page=audit.php\n";
 	print "userid=" . $row1->userid . "\n";;
 	print "key_loc=" . $sessionkey . "\n";
