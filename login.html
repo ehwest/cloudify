@@ -115,11 +115,11 @@
                       print "</td>";
                     print "</tr>";
 
-		$provideurl = 0;
+		$provideurl = 1;
 		if($provideurl==1){
                     print"<tr>";
                       print "<td >";
-                        print "<div align='right'><span class='logintext'>Application Host URL (optional)</span>:</div></td>";
+                        print "<div align='right'><span class='logintext'>GitHub PHR URL</span>:</div></td>";
                       print "<td >";
                         print "<input name='hosturlfield' width='60' value='" . $row->defaulturl . "' type='text' class='tableselectbox'>";
                       print "</td>";
