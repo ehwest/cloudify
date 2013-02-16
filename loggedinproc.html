@@ -41,7 +41,8 @@
 
 		  $smsaddress = $devicephonenumberfield . "@txt.att.net";
 		  //$smscontent =  $hosturlfield . "?model=" . base64_encode(trim($defaultmodel))  ;
-		  $smscontent = "https://transactionalweb.com/cloud/configfile.html?s=" . $sessionkey . "&u=" . $uid;
+		  //$smscontent = "https://transactionalweb.com/cloud/configfile.html?s=" . $sessionkey . "&u=" . $uid;
+		  $smscontent = "http://transactionalweb.com/cloud/configfile.html?s=" . $sessionkey . "&u=" . $uid;
 		  mysql_query($q2);
 
 		  $message = "Message Sent! SMS address=";
