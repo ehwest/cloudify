@@ -1,0 +1,52 @@
+<?
+        session_start();
+        $uid = $_REQUEST['u'];
+        $sessionkey = $_REQUEST['s'];
+        //$devicephonenumberfield = $_REQUEST['devicephonenumberfield'];
+        //$hosturlfield = $_REQUEST['hosturlfield'];
+
+        $dbname = "cloudify";
+        $dbhostname="db02.transactionalweb.net";
+        $dblogin = "cloudify";
+        $dbpassword="cloudify";
+
+        if( !($dbLink = mysql_connect($dbhostname, $dblogin, $dbpassword))) {
+                 print("Failed phase1 to connect to server!\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+        if( ! mysql_select_db($dbname, $dbLink) ) {
+                 print("Failed phase2 to connect to database on server!<BR>\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+
+	$q1 = "SELECT * from users where ";
+	$q1 .= " uid='" . $uid . "' AND ";
+	$q1 .= " sessionkey='" . $sessionkey . "' limit 1; ";
+
+	$dbr1 = mysql_query($q1);
+	$row1 = mysql_fetch_object($dbr1);
+	
+	print "[deviceDetect]\n";
+	print "vid=1111\n";
+	print "pid=2222\n";
+	print "\n";
+	print "[resourceRequest]\n";
+	print "addr=bewest.io";
+	print "port=80";
+	print "page=audit.php";
+	print "userid=" . $row1->userid . "\n";;
+	print "key_loc=" . $sessionkey . "\n";
+	print "\n";
+	print "[serialToNet]\n";
+	print "addr=bewest.io\n";
+	print "port=9001\n";
+	print "\n";
+	print "[registration]\n";
+	print "addr=bewest.io\n";
+	print "firstname=" . stripslashes(trim($row1->firstname)) . "\n";
+	print "lastname="  . stripslashes(trim($row1->lastname)) . "\n";
+?>

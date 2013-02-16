@@ -1,0 +1,87 @@
+<?
+	session_start();
+	if($_SESSION['loggedin'] !=1) {
+		$message = base64_encode("You are not logged in.");
+		header("Location:  index.html?m=" . $message  );
+	}
+
+        $dbname = "cloudify";
+        $dbhostname="db02.transactionalweb.net";
+        $dblogin = "cloudify";
+        $dbpassword="cloudify";
+
+        if( !($dbLink = mysql_connect($dbhostname, $dblogin, $dbpassword))) {
+                 print("Failed phase1 to connect to server!\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+        if( ! mysql_select_db($dbname, $dbLink) ) {
+                 print("Failed phase2 to connect to database on server!<BR>\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+	
+		print "<link href='ew.css' rel='stylesheet' type='text/css'>";
+		$referrer = trim($_REQUEST['referrer']);
+
+		print "<form action='adduserproc.html' method=POST>";
+		print "<table width=50% align=center class='tablerowtext'>";
+		
+
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right'><span class='logintext'>UserID</span>:</div></td>";
+                      print "<td >";
+                        print "<input name='useridfield'  type='text' class='tableselectbox'>";
+                      print "</td>";
+                    print "</tr>";
+
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right'><span class='logintext'>Password</span>:</div></td>";
+                      print "<td >";
+                        print "<input name='passwordfield'  type='text' class='tableselectbox'>";
+                      print "</td>";
+                    print "</tr>";
+
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right'><span class='logintext'>First Name</span>:</div></td>";
+                      print "<td >";
+                        print "<input name='firstnamefield'  type='text' class='tableselectbox'>";
+                      print "</td>";
+                    print "</tr>";
+
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right'><span class='logintext'>Last Name</span>:</div></td>";
+                      print "<td >";
+                        print "<input name='lastnamefield'  type='text' class='tableselectbox'>";
+                      print "</td>";
+                    print "</tr>";
+
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right' class='logintext'>Privileges</span>:</div></td>";
+                      print "<td >";
+                        print "<select name='privilegesfield' type='text' class='tableselectbox'>";
+			print "<option value='unselected'>Select One</option>";
+			print "<option value='useronly'>User privileges only.</option>";
+			print "<option value='admin'>Administration privileges.</option>";
+			print "<select>";
+                      print "</td>";
+                    print "</tr>";
+                    print "<tr>";
+                      print "<td colspan='2' height='50' align='left'>";
+                        print "<div align='right'>";
+                          print "<input type='submit' class='submitbutton' name='submit' value='Add user' >";
+                      print "</div>";
+                    print "<input name='referrer' type='hidden' value='" . $referrer . "' >" ;
+                   print "</td>";
+                    print "</tr>";
+
+		print "</table>";
+		print "</form>";
+?>

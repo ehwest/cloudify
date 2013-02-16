@@ -1,0 +1,69 @@
+<?
+	session_start();
+	$uid = $_SESSION['uid'];
+	$defaultmodel = $_REQUEST['modelfield'];
+	$devicephonenumberfield = $_REQUEST['devicephonenumberfield'];
+	$hosturlfield = $_REQUEST['hosturlfield'];
+
+        $dbname = "cloudify";
+        $dbhostname="db02.transactionalweb.net";
+        $dblogin = "cloudify";
+        $dbpassword="cloudify";
+
+        if( !($dbLink = mysql_connect($dbhostname, $dblogin, $dbpassword))) {
+                 print("Failed phase1 to connect to server!\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+        if( ! mysql_select_db($dbname, $dbLink) ) {
+                 print("Failed phase2 to connect to database on server!<BR>\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+	$q = "select * from users where ";
+	$q .= " uid='" . $uid. "' ;"; 
+
+	$dbr = mysql_query($q,$dbLink);
+	$n = mysql_num_rows($dbr);
+	if($n > 0){
+
+		   $sessionkey = mt_rand();
+		//print "sessionkey=$sessionkey";
+		  $q2 = "UPDATE users set ";
+		  //$q2 .= " defaultmodel='" . addslashes(trim($defaultmodel)) . "', ";
+		  //$q2 .= " defaulturl='" . addslashes(trim($hosturlfield)) . "', ";
+		  $q2 .= " msisdn='" . addslashes(trim($devicephonenumberfield)) . "', ";
+		  $q2 .= " sessionkey='" . $sessionkey . "' ";
+		  $q2 .= " WHERE uid='" . $uid . "';";
+		  //print "q2=$q2";
+
+		  $smsaddress = $devicephonenumberfield . "@txt.att.net";
+		  //$smscontent =  $hosturlfield . "?model=" . base64_encode(trim($defaultmodel))  ;
+		  $smscontent = "https://transactionalweb.com/cloud/configfile.html?s=" . $sessionkey . "&u=" . $uid;
+		  mysql_query($q2);
+
+		  $message = "Message Sent! SMS address=";
+		  $message .= $smsaddress;
+		  $message .=  " " .$smscontent;
+
+                  require("class.phpmailer.php");
+                  $fromemail = 'earle.west@transactionalweb.com';
+                  $fromname = 'TransActionalWeb.Com'; 
+                  $mail = new PHPMailer(); 
+                  $mail->From = $fromemail;
+                  $mail->FromName = $fromname;
+                  $mail->AddAddress(trim($smsaddress), "");
+                  $mail->IsHTML(false);
+                  $mail->Subject = "CMD";
+                  $mail->Body = $smscontent; 
+
+                  $mail->Send();
+
+		  header("Location: index.html?m=" . base64_encode($message) );
+		}else{
+		 $message = base64_encode("Not Done.");
+		 header("Location: index.html?m=" . $message );
+	}
+?>

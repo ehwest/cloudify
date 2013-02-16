@@ -1,0 +1,56 @@
+<?
+	session_start();
+	$uid = $_SESSION['uid'];
+
+	$pw = crypt(trim($_REQUEST['passwordfield']),"XX");
+	$userid= trim($_REQUEST['useridfield']);
+	$privilegesfield = trim($_REQUEST['privilegesfield']);
+	$firstname = addslashes(trim($_REQUEST['firstnamefield']));
+	$lastname  = addslashes(trim($_REQUEST['lastnamefield']));
+
+        $dbname = "cloudify";
+        $dbhostname="db02.transactionalweb.net";
+        $dblogin = "cloudify";
+        $dbpassword="cloudify";
+
+        if( !($dbLink = mysql_connect($dbhostname, $dblogin, $dbpassword))) {
+                 print("Failed phase1 to connect to server!\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+        if( ! mysql_select_db($dbname, $dbLink) ) {
+                 print("Failed phase2 to connect to database on server!<BR>\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+	if($privilegesfield=="useronly") $p1 = 1;
+	if($privilegesfield=="admin") $p1 = 2;
+
+
+	if($userid !="" && trim($_REQUEST['passwordfield']) !=""){
+		$q1  = "INSERT into users set ";
+		$q1 .= " userid='" . $userid . "', ";
+		$q1 .= " password='" . $pw . "', ";
+		$q1 .= " firstname='" . $firstname. "', ";
+		$q1 .= " lastname='" . $lastname. "', ";
+		$q1 .= " privilege1='" . $p1 . "'; ";
+		print $q1;
+		mysql_query($q1);
+	}
+	$q = "select * from users where ";
+	$q .= " userid='" . $entereduserid . "' AND ";
+	$q .= " password='" . $pw . "' limit 1";
+
+	$dbr = mysql_query($q,$dbLink);
+	$n = mysql_num_rows($dbr);
+	if($n > 0){
+		 $message = base64_encode("New user added.");
+		 header("Location: index.html?m=" . $message );
+		}else{
+		 $message = base64_encode("Failed to add new user.");
+		 header("Location: index.html?m=" . $message );
+	}
+
+?>

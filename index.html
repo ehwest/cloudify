@@ -1,0 +1,46 @@
+<?
+		//phpinfo();
+		session_start();
+		$_SESSION['loggedin'] = 0;
+
+		print "<link href='ew.css' rel='stylesheet' type='text/css'>";
+		$referrer = trim($_REQUEST['referrer']);
+		$message = base64_decode(trim($_REQUEST['m']));
+
+		print "<form action='login.html' method=POST>";
+		print "<table width=50% align=center class='tablerowtext'>";
+
+		    print "<tr class='tablerowtext'><td colspan='2' align='center' ><br><br>" . "USB Cloud Activator" . " </td></tr>";
+		if($message !="") {
+		
+		    print "<tr class='tablerowtext'><td colspan='2' align='center' ><br><br>" . $message . " </td></tr>";
+		}
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right'><span class='logintext'>User ID</span>:</div></td>";
+                      print "<td >";
+                        print "<input name='useridfield' type='text' class='tablevaluebox'>";
+                      print "</td>";
+                    print "</tr>";
+
+                    print "<tr>";
+                      print "<td >";
+                        print "<div align='right' class='logintext'>Password:</div></td>";
+                      print "<td >";
+                        print "<input name='passwordfield' type='password' class='tablevaluebox'>";
+                      print "</td>";
+                    print "</tr>";
+
+                    print "<tr>";
+                      print "<td colspan='2' height='50' align='left'>";
+                        print "<div align='right'>";
+                          print "<input type='submit' class='submitbutton' name='submit' value='Log In!' >";
+                      print "</div>";
+		    print "<input name='referrer' type='hidden' value='" . $referrer . "' >" ;
+		   print "</td>";
+                    print "</tr>";
+
+		print "</table>";
+		print "</form>";
+
+?>

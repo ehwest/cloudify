@@ -1,0 +1,147 @@
+<?
+	session_start();
+	$uid = $_SESSION['uid'];
+	$enteredpw = trim($_REQUEST['passwordfield']);
+	$entereduserid = trim($_REQUEST['useridfield']);
+
+
+        $dbname = "cloudify";
+        $dbhostname="db02.transactionalweb.net";
+        $dblogin = "cloudify";
+        $dbpassword="cloudify";
+
+        if( !($dbLink = mysql_connect($dbhostname, $dblogin, $dbpassword))) {
+                 print("Failed phase1 to connect to server!\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+        if( ! mysql_select_db($dbname, $dbLink) ) {
+                 print("Failed phase2 to connect to database on server!<BR>\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+	$encryptedpw = crypt($enteredpw,"XX");
+
+	$firstimeever = 0;//this gets the first user an encrypted password loaded
+	if($firstimeever==1){
+	if($entereduserid=='ehw'){
+		$q1 = "INSERT into users set ";
+		$q1 .= " userid='ehw', ";
+		$q1 .= " password ='" .$encryptedpw . "'; ";
+		print $q1;
+		mysql_query($q1);
+		exit();
+	 }
+	}//firstimeever
+
+	$q = "select * from users where ";
+	$q .= " userid='" . $entereduserid . "' AND ";
+	$q .= " password='" . $encryptedpw. "' limit 1";
+
+	$dbr = mysql_query($q,$dbLink);
+	$n = mysql_num_rows($dbr);
+
+	if($n <1){
+		$message= base64_encode("Invalid credentials. Try again.");
+		header("Location: index.html?m=" . $message);
+		$loggedin = 0;
+		$_SESSION['loggedin'] = 0;
+		exit();
+	}else{
+		$row = mysql_fetch_object($dbr);
+		$loggedin = 1;
+		$_SESSION['loggedin'] = 1;
+		$_SESSION['uid'] = $row->uid;
+		$_SESSION['firstname'] = stripslashes($row->firstname);
+		$_SESSION['lastname'] = stripslashes($row->lastname);
+		$_SESSION['defaultmodel'] = stripslashes($row->defaultmodel);
+		$_SESSION['defaulturl'] = stripslashes($row->defaulturl);
+		$_SESSION['serialno'] = stripslashes($row->serialno);
+		$_SESSION['privilege1'] = stripslashes($row->privilege1);
+		$_SESSION['msisdn'] = stripslashes($row->msisdn);
+		$defaultmodel = $row->defaultmodel;
+		$defaulturl = $_SESSION['defaulturl'];
+		$serialno= $_SESSION['serialno'];
+	}
+	
+	if($loggedin == 1){
+		print "<link href='ew.css' rel='stylesheet' type='text/css'>";
+		$referrer = trim($_REQUEST['referrer']);
+
+		print "<form action='loggedinproc.html' method=POST>";
+		print "<table  align=center class='tablerowtext'>";
+		
+		$message = "Welcome " . $_SESSION['firstname'] . " " . $_SESSION['lastname'] . ".  You are now logged in.";
+
+		if($message !="") {
+		    print "<tr class='tablerowtext'><td colspan='2' align='center' ><br><br>" . $message . " </td></tr>";
+		    print "<tr class='tablerowtext'><td colspan='2' align='center' ><a href=index.html >Log Out</a> </td></tr>";
+		}
+
+
+		$selectmodel = 0;
+		if ($selectmodel==1){
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right' class='logintext'>Model (optional)</span>:</div></td>";
+			$opt1 = "";
+			$opt2 = "";
+			$opt3 = "";
+			$opt4 = "";
+			$opt5 = "";
+                        if($defaultmodel=="unselected") $opt1 = "selected";
+                        if($defaultmodel=="onetouchultra2") $opt2 = "selected";
+                        if($defaultmodel=="onetouchultramini") $opt3 = "selected";
+                        if($defaultmodel=="paradigmpump") $opt4 = "selected";
+                        if($defaultmodel=="bayercontour") $opt5 = "selected";
+                      print "<td >";
+                        print "<select name='modelfield' type='text' class='tableselectbox'>";
+                        print "<option value='unselected' " . $opt1 . " >Select One</option>";
+                        print "<option value='onetouchultra2' " . $opt2 . " >OneTouch Ultra 2</option>";
+                        print "<option value='onetouchultramini' " . $opt3 . " >OneTouch UltraMini</option>";
+                        print "<option value='paradigmpump' " . $opt4 . " >Minimed Paradigm Pump</option>";
+                        print "<option value='bayercontour' " . $opt5 . " >Bayer Countour USB</option>";
+                        print "<select>";
+                      print "</td>";
+                    print "</tr>";
+		}
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right'><span class='logintext'>Device Phone Number</span>:</div></td>";
+                      print "<td >";
+                        print "<input name='devicephonenumberfield' value='" . $row->msisdn . "' type='text' class='tableselectbox'>";
+                      print "</td>";
+                    print "</tr>";
+
+		$provideurl = 0;
+		if($provideurl==1){
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right'><span class='logintext'>Application Host URL (optional)</span>:</div></td>";
+                      print "<td >";
+                        print "<input name='hosturlfield' width='60' value='" . $row->defaulturl . "' type='text' class='tableselectbox'>";
+                      print "</td>";
+                    print "</tr>";
+		}
+
+
+                    print "<tr>";
+                      print "<td colspan='2' height='50' align='left'>";
+                        print "<div align='right'>";
+                          print "<input type='submit' class='submitbutton' name='submit' value='Attach Device !' >";
+                      print "</div>";
+		    print "<input name='referrer' type='hidden' value='" . $referrer . "' >" ;
+		   print "</td>";
+                    print "</tr>";
+
+		if($_SESSION['privilege1'] >=2){
+		    print "<tr class='tablerowtext'><td colspan='2' align='center' >You have privileges:  <a href=adduser.html >Add a new user.</a> </td></tr>";
+		}
+
+		print "</table>";
+		print "</form>";
+
+	}
+?>
