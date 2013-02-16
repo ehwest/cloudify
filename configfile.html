@@ -1,4 +1,5 @@
 <?
+	header("Content-Type: text/plain");
         session_start();
         $uid = $_REQUEST['u'];
         $sessionkey = $_REQUEST['s'];
@@ -37,7 +38,7 @@
 	print "[resourceRequest]\n";
 	print "addr=bewest.io\n";
 	print "port=80\n";
-	print "audit=medevice:1536432243@bewest.io:9001/insulaudit
+	print "audit=medevice:1536432243@bewest.io:9001/insulaudit";
 	print "page=audit.php\n";
 	print "userid=" . $row1->userid . "\n";;
 	print "key_loc=" . $sessionkey . "\n";
