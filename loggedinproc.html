@@ -29,12 +29,14 @@
 	$n = mysql_num_rows($dbr);
 	if($n > 0){
 
+		 $nowtime = time();
 		   $sessionkey = mt_rand();
 		//print "sessionkey=$sessionkey";
 		  $q2 = "UPDATE users set ";
 		  //$q2 .= " defaultmodel='" . addslashes(trim($defaultmodel)) . "', ";
 		  $q2 .= " defaulturl='" . addslashes(trim($hosturlfield)) . "', ";
 		  $q2 .= " msisdn='" . addslashes(trim($devicephonenumberfield)) . "', ";
+		  $q2 .= " smstime = '" . $nowtime . "', ";
 		  $q2 .= " sessionkey='" . $sessionkey . "' ";
 		  $q2 .= " WHERE uid='" . $uid . "';";
 		  //print "q2=$q2";

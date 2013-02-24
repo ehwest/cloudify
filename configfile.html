@@ -43,12 +43,12 @@
 	print "[resourceRequest]\n";
 	print "addr=bewest.io\n";
 	print "port=80\n";
-	print "audit=medevice://" . $row1->userid .  "@bewest.io:9001/insulaudit";
 	print "page=audit.php\n";
 	print "userid=" . $row1->uid . "\n";;
 	print "key=" . $sessionkey . "\n";
 	print "\n";
 	print "[serialToNet]\n";
+	print "audit=medevice://" . $row1->userid .  "@bewest.io:9001/insulaudit\n";
 	print "addr=bewest.io\n";
 	print "port=9001\n";
 	print "\n";
@@ -60,4 +60,11 @@
 	print "phr=" . stripslashes(trim($row1->defaulturl)) . "\n";
 	print "firstname=" . stripslashes(trim($row1->firstname)) . "\n";
 	print "lastname="  . stripslashes(trim($row1->lastname)) . "\n";
+
+
+	$nowtime = time();
+	$q = " UPDATE users set polltime='" . $nowtime . "' WHERE ";
+	$q .= " uid='" . $uid . "' AND ";
+	$q .= " sessionkey='" . $sessionkey . "' LIMIT 1;";
+	$dbr = mysql_query($q);
 ?>
