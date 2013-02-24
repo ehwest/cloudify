@@ -42,12 +42,18 @@
 		  $smsaddress = $devicephonenumberfield . "@txt.att.net";
 		  //$smscontent =  $hosturlfield . "?model=" . base64_encode(trim($defaultmodel))  ;
 		  //$smscontent = "https://transactionalweb.com/cloud/configfile.html?s=" . $sessionkey . "&u=" . $uid;
-		  $smscontent = "https://transactionalweb.com/cloud/configfile.html?s=" . $sessionkey . "&u=" . $uid;
+		  $smscontent = "STR https://transactionalweb.com/cloud/configfile.html?s=" . $sessionkey . "&u=" . $uid;
 		  mysql_query($q2);
 
-		  $message = "Message Sent! SMS address=";
-		  $message .= $smsaddress;
-		  $message .=  " " .$smscontent;
+		$smssubject = date("Y-m-d") . 'T' . date("H:i:s") .'+00:00';
+
+		  $message = "<br><b>Message Sent To:<br></b>" . $smsaddress;
+		  $message .= "<br><b>Subject: <br></b>" ;
+		  $message .=  date("Y-m-d") . 'T' . date("H:i:s") .'+00:00';
+		  $message .= "<br><b>Content: <br></b>" ;
+		  $message .=  $smscontent;
+
+		
 
                   require("class.phpmailer.php");
                   $fromemail = 'earle.west@transactionalweb.com';
@@ -57,7 +63,7 @@
                   $mail->FromName = $fromname;
                   $mail->AddAddress(trim($smsaddress), "");
                   $mail->IsHTML(false);
-                  $mail->Subject = "CMD";
+                  $mail->Subject = $smssubject;
                   $mail->Body = $smscontent; 
 
                   $mail->Send();
