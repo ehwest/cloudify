@@ -39,6 +39,7 @@
 	print "[deviceDetect]\n";
 	print "vid=1111\n";
 	print "pid=2222\n";
+	print "auditor=mini.py\n";
 	print "\n";
 	print "[resourceRequest]\n";
 	print "addr=bewest.io\n";
@@ -54,13 +55,11 @@
 	print "\n";
 	print "[registration]\n";
 	print "addr=bewest.io\n";
-	print "postpubkeyhere=https://transactionalweb.com/cloud/postpubkey.html?s=" . $sessionkey . "&u=" . $uid .  "\n";
-	print "pubkey=" . $row1->pubkey . "\n";
+	print "dataurl=https://transactionalweb.com/cloud/auditdata.htm?key=" . trim($sessionkey) . "&u=" . trim($row1->uid) . "\n";
+	//print "postpubkeyhere=https://transactionalweb.com/cloud/postpubkey.html?s=" . $sessionkey . "&u=" . $uid .  "\n";
+	//print "pubkey=" . $row1->pubkey . "\n";
 	print "pollinginterval=300\n";
-	print "phr=" . stripslashes(trim($row1->defaulturl)) . "\n";
-	print "firstname=" . stripslashes(trim($row1->firstname)) . "\n";
-	print "lastname="  . stripslashes(trim($row1->lastname)) . "\n";
-
+	print "phr=git@github.com:ehwest/medicalrecords.git" . "\n";
 
 	$nowtime = time();
 	$q = " UPDATE users set polltime='" . $nowtime . "' WHERE ";

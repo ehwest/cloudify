@@ -61,8 +61,10 @@
 		$_SESSION['serialno'] = stripslashes($row->serialno);
 		$_SESSION['privilege1'] = stripslashes($row->privilege1);
 		$_SESSION['msisdn'] = stripslashes($row->msisdn);
+		$_SESSION['weburl'] = stripslashes($row->weburl);
 		$defaultmodel = $row->defaultmodel;
 		$defaulturl = $_SESSION['defaulturl'];
+		$weburl = $_SESSION['weburl'];
 		$serialno= $_SESSION['serialno'];
 	}
 	
@@ -122,6 +124,28 @@
                         print "<div align='right'><span class='logintext'>GitHub PHR URL</span>:</div></td>";
                       print "<td >";
                         print "<input name='hosturlfield' width='60' value='" . $row->defaulturl . "' type='text' class='tableselectbox'>";
+                      print "</td>";
+                    print "</tr>";
+		}
+
+		$provideurl = 1;
+		if($provideurl==1){
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right'><span class='logintext'>WEB SERVICE URL</span>:</div></td>";
+                      print "<td >";
+                        print "<input name='weburlfield' width='60' value='" . $row->weburl . "' type='text' class='tableselectbox'>";
+                      print "</td>";
+                    print "</tr>";
+		}
+
+		$provideurl = 1;
+		if($provideurl==1){
+                    print"<tr>";
+                      print "<td >";
+                        print "<div align='right'><span class='logintext'>YOUR WEB CHART URL</span>:</div></td>";
+                      print "<td >";
+                        print "<a href='https://transactionalweb.com/cloud/chartdata.htm?uid=" . $uid . "'>https://transactionalweb.com/cloud/chartdata.htm?uid=" . $uid . "</a>";
                       print "</td>";
                     print "</tr>";
 		}
