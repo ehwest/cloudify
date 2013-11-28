@@ -1,0 +1,112 @@
+<?
+
+        $dbname = "cloudify";
+        $dbhostname="db02.transactionalweb.net";
+        $dblogin = "cloudify";
+        $dbpassword="cloudify";
+
+        if( !($dbLink = mysql_connect($dbhostname, $dblogin, $dbpassword))) {
+                 print("Failed phase1 to connect to server!\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+        if( ! mysql_select_db($dbname, $dbLink) ) {
+                 print("Failed phase2 to connect to database on server!<BR>\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+//Get file transferred
+	$nowtime = time();
+	$s = file_get_contents($_FILES['userfile']['tmp_name']);
+	$encodedfilecontent = base64_encode( $s );
+	$filesize = strlen($s);
+
+//save the raw data
+	$q1 = "INSERT into  rawdatapolled set ";
+	$q1 .= " keyused = '" . $_REQUEST['key'] . "', ";
+	$q1 .= " uid = '" . $_REQUEST['uid'] . "', ";
+	$q1 .= " tod = '" . $nowtime . "', ";
+	$q1 .= " rawcontent = '" . $encodedfilecontent . "'; ";
+	mysql_query($q1);
+	$ix = mysql_insert_id();
+	//print $q1;
+
+        $content = $_REQUEST['content'];
+        //$content   = utf8_decode($_REQUEST["content"]);
+        $ipaddress = $_SERVER["REMOTE_ADDR"];
+        $contentlength = strlen($content);
+	$sessionkey=$_REQUEST['key'];
+
+
+//log stuff
+ 	$timeid = microtime();
+        $fqdnlogtrace =  "rawlog.txt";
+        $f4 = fopen($fqdnlogtrace,"a");
+          $info = "\n\n\nAt " . date("n/j/Y H:i:s") . " Server received POLL request from ipaddress=" . $ipaddress . "\n length of content: " . strlen($content) . "\n\n";
+          $info .= "\nSTART of Content follows:\n";
+          $info .= "print " . strlen($content) . " bytes received.\n";;
+           //if(strlen($content) < 1000) $info .= "print CONTENT:\n" . $content . " WAS received.\n";;
+          $info .= "\nEND of content.\n\n\n";
+	  $info .= "filename=" . $_FILES['userfile']['tmp_name'];
+	   //print_r($GLOBALS);
+	  //print_r($_FILES);
+	  $info .= "sessionkey=$sessionkey\n";
+	  $info .= "\n Here is the filecontents: \n " . $s;
+          fwrite($f4,$info);
+
+//This fragement helps diagnose issues.
+	$diagnose = 1;
+	if($diagnose==1){
+	  $q4 = "select * from rawdatapolled where ix='" . $ix . "' order by ix desc limit 1;";
+		print "q4=$q4";
+	  $dbr4 = mysql_query($q4);
+	  $row4 = mysql_fetch_object($dbr4);
+	  $s = base64_decode($row4->rawcontent);
+	  $uid = $row4->uid;
+	  //print $s;
+	}
+
+//parsing here
+         $parts = explode("\n",$s);
+         //print_r($parts);
+         foreach($parts as $onepart){
+                        $lineparts = explode("\t",$onepart);
+                        //print_r($lineparts);
+                        $t = time2epoch(trim($lineparts[0]));
+                        //print date("n/j/Y H:i:s",$t);
+                        //print "\n";
+			if($t>10){
+			$q2 = "SELECT *  from parsedata where ";
+			$q2 .= "tod='" . $t . "' AND ";
+			$q2 .= "uid='" . $uid . "' AND ";
+			$q2 .= "value='" . trim($lineparts[1]) . "'; ";
+			$dbr2 = mysql_query($q2);
+			$n2 = mysql_num_rows($dbr2);
+			//print "n2=$n2; $q2=$q2\n";
+			if($n2<1){
+			  $q3 = "INSERT into parsedata set ";
+			  $q3 .= " tod='" . $t . "', ";
+			  $q3 .= " polltod='" . $nowtime . "', ";
+			  $q3 .= " pollix='" . $ix . "', ";
+			  $q3 .= " uid='" . $uid . "', ";
+			  $q3 .= " mtype='" . "mini" . "', ";
+			  $q3 .= " value='" . trim($lineparts[1]) . "'; ";
+			  mysql_query($q3);
+			}
+			}//t>10 valid data
+         }//foreach line
+
+	print "File of size=$filesize was uploaded and parsed successfully.";
+
+function time2epoch($s){
+    //2011-01-13T15:42:08
+        $parts = explode("T",$s);
+        $dateparts = explode("-",$parts[0]);
+        $timeparts = explode(":",$parts[1]);
+        $t = mktime($timeparts[0],$timeparts[1],$timeparts[2],$dateparts[1],$dateparts[2],$dateparts[0]);
+        return($t);
+
+}
+?>

@@ -1,0 +1,47 @@
+<?
+	header("Content-Type: text/plain");
+
+        session_start();
+        $uid        = $_REQUEST['u'];
+        $sessionkey = $_REQUEST['s'];
+        $pubkey     = $_REQUEST['k'];
+	
+	//print_r($_REQUEST);
+
+        //$devicephonenumberfield = $_REQUEST['devicephonenumberfield'];
+        //$hosturlfield = $_REQUEST['hosturlfield'];
+
+        $dbname = "cloudify";
+        $dbhostname="db02.transactionalweb.net";
+        $dblogin = "cloudify";
+        $dbpassword="cloudify";
+
+        if( !($dbLink = mysql_connect($dbhostname, $dblogin, $dbpassword))) {
+                 print("Failed phase1 to connect to server!\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+        if( ! mysql_select_db($dbname, $dbLink) ) {
+                 print("Failed phase2 to connect to database on server!<BR>\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+
+	$q1 = "UPDATE users set ";
+	$q1 .= "pubkey='" . $pubkey . "' WHERE ";
+	$q1 .= " uid='" . $uid . "' AND ";
+	$q1 .= " sessionkey='" . $sessionkey . "' limit 1; ";
+
+	$dbr1 = mysql_query($q1);
+	$row1 = mysql_fetch_object($dbr1);
+	
+	//print "<PRE>";
+	//print $q1;
+	//print_r($row1);
+	//print "</PRE>";
+	print "Updated Public key!  " ;
+
+	exit();
+?>

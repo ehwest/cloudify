@@ -1,0 +1,27 @@
+date,sugar
+<?PHP
+
+        $dbname = "cloudify";
+        $dbhostname="db02.transactionalweb.net";
+        $dblogin = "cloudify";
+        $dbpassword="cloudify";
+
+        if( !($dbLink = mysql_connect($dbhostname, $dblogin, $dbpassword))) {
+                 print("Failed phase1 to connect to server!\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+        if( ! mysql_select_db($dbname, $dbLink) ) {
+                 print("Failed phase2 to connect to database on server!<BR>\n");
+                 print("Request Aborted!\n");
+                 exit();
+        }
+
+	$q2 = "SELECT * from parsedata order by tod; ";
+	$dbr2 = mysql_query($q2);
+	while($row2=mysql_fetch_object($dbr2)){
+		print date("Y-m-d",$row2->tod) . "T" . date("H:m:s",$row2->tod) . "," . $row2->value . "<br>\n";
+	}
+
+?>

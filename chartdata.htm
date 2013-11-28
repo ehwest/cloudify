@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Glucose levels</title>
+ 
+    <link rel="stylesheet" href="main.css">
+</head>
+ 
+<body>
+ 
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="https://transactionalweb.com/cloud/d3.js"></script>
+ 
+<?
+	$uid = $_REQUEST['uid'];
+	print "\n<script  >\n";
+	print "var url = 'https://transactionalweb.com/cloud/jsondata.php?uid=" . $uid . "'; \n";
+	print "</script >\n";
+
+?>
+    <script src="https://transactionalweb.com/cloud/script.js"></script>
+
+  <div id="lab">
+    <div id="test"></div>
+  </div>
+  <div id="clone"></div>
+ 
+</body>
+</html>
